@@ -1,3 +1,5 @@
+package BowlingOne;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,69 +26,49 @@ public class BowlingGame {
                 bowlingRound = new BowlingRound(i, 1);
             }
 
-            this.bowlingRounds.add(bowlingRound);
+            bowlingRounds.add(bowlingRound);
         }
 
     }
 
     public void playGame(boolean test, int... values) {
         Scanner scan = new Scanner(System.in);
-        Iterator var4 = this.bowlingRounds.iterator();
-
-        while(var4.hasNext()) {
-            BowlingRound round = (BowlingRound)var4.next();
+        for (BowlingRound round : bowlingRounds) {
             round.roundCalc(scan, test, values);
-            this.gameScore = 0;
-            this.gameCalc();
-            System.out.println("Game score is: " + this.gameScore);
+            gameScore = 0;
+            gameCalc();
+            System.out.println("Game score is: " + gameScore);
         }
-
         scan.close();
     }
 
     public void gameCalc() {
-        Iterator var1 = this.bowlingRounds.iterator();
-
-        while(true) {
-            BowlingRound round;
-            label24:
-            do {
-                while(var1.hasNext()) {
-                    round = (BowlingRound)var1.next();
-                    if (round.getRoundStatus() == 1) {
-                        continue label24;
-                    }
-
-                    this.gameScore += round.getRoundScore();
-                }
-
-                return;
-            } while(round.getRoundType() != 2 && round.getRoundType() != 1);
-
-            this.strikeOrSpareCalc(round.getId());
+        int score = 0;
+        for (BowlingRound round : bowlingRounds) {
+            // if round is not done.
+            if (round.getRoundStatus() == 1) {
+                strikeOrSpareCalc(round.getId());
+            }
+            score += round.getRoundScore();
         }
+        gameScore = score;
     }
 
     public void strikeOrSpareCalc(int id) {
         int frameCount = 0;
         int score = 0;
 
-        for(int i = id; i < this.bowlingRounds.size(); ++i) {
-            Iterator var5 = ((BowlingRound)this.bowlingRounds.get(i)).getBowlingFrames().iterator();
-
-            while(var5.hasNext()) {
-                BowlingFrame frame = (BowlingFrame)var5.next();
+        for(int i = id; i < bowlingRounds.size(); ++i) {
+            for (BowlingFrame frame : bowlingRounds.get(i).getBowlingFrames()) {
                 if (frame.getFrameStatus() == 1) {
                     score += frame.getPinsShot();
                     if (frameCount == 2) {
-                        ((BowlingRound)this.bowlingRounds.get(id)).roundIsDone(score);
+                        bowlingRounds.get(id).roundIsDone(score);
                     }
-
                     ++frameCount;
                 }
             }
         }
-
     }
 
     public int getId() {

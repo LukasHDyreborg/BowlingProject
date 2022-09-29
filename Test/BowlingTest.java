@@ -1,3 +1,5 @@
+import BowlingOne.BowlingGame;
+import BowlingOne.BowlingRound;
 import org.junit.Test;
 
 import java.util.Scanner;

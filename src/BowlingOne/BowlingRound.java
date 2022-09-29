@@ -1,20 +1,23 @@
+package BowlingOne;
+
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
 public class BowlingRound {
     private int id;
-    private int roundNumber;
+    private int roundNumber; // 0 = first round. 1 = normal round. 2 = last round.
     private List<BowlingFrame> bowlingFrames = new ArrayList();
-    private int roundStatus;
-    private int roundType;
+    private int roundStatus; // 0 = not Played. 1 = not Done. 2 = Done.
+    private int roundType; // 0 = normal round. 1 = spare. 2 = strike.
     private int roundScore;
 
     public BowlingRound() {
         this.id = 0;
+        // sets the round to be the first.
         this.roundNumber = 0;
         this.generateFrames();
+        // sets the round status to not played.
         this.roundStatus = 0;
     }
 
@@ -22,76 +25,81 @@ public class BowlingRound {
         this.id = id;
         this.roundNumber = roundNumber;
         this.generateFrames();
+        // sets the round status to not played.
         this.roundStatus = 0;
     }
 
     public void generateFrames() {
         int i;
         BowlingFrame bowlingFrame;
-        if (this.roundNumber == 2) {
+        // if the round is the last.
+        if (roundNumber == 2) {
             for(i = 0; i <= 2; ++i) {
                 bowlingFrame = new BowlingFrame();
-                this.bowlingFrames.add(bowlingFrame);
+                bowlingFrames.add(bowlingFrame);
             }
         } else {
             for(i = 0; i <= 1; ++i) {
                 bowlingFrame = new BowlingFrame();
-                this.bowlingFrames.add(bowlingFrame);
+                bowlingFrames.add(bowlingFrame);
             }
         }
 
     }
 
     public void roundCalc(Scanner scan, boolean test, int... values) {
-        if (this.roundStatus == 0) {
-            this.roundStatus = 1;
-            Iterator var4 = this.bowlingFrames.iterator();
-
-            while(var4.hasNext()) {
-                BowlingFrame frame = (BowlingFrame)var4.next();
+        // If round is not played.
+        if (roundStatus == 0) {
+            // sets round to not done.
+            roundStatus = 1;
+            for (BowlingFrame frame : bowlingFrames) {
                 if (frame.getFrameStatus() == 0) {
                     int score;
                     if (test) {
                         score = values[0];
                         frame.shootFrameTest(values[score]);
                         if (values[0] < values.length) {
-                            int var10002 = values[0]++;
+                            values[0]++;
                         }
                     } else {
                         frame.shootFrame(scan);
                     }
 
-                    if (((BowlingFrame)this.getBowlingFrames().get(0)).getPinsShot() == 10) {
-                        this.roundIsStrike();
-                    } else if (((BowlingFrame)this.getBowlingFrames().get(1)).getFrameStatus() == 1) {
-                        if (((BowlingFrame)this.getBowlingFrames().get(0)).getPinsShot() + ((BowlingFrame)this.getBowlingFrames().get(1)).getPinsShot() == 10) {
-                            this.roundIsSpare();
+                    if (bowlingFrames.get(0).getPinsShot() == 10) {
+                        roundIsStrike();
+                    }
+                    else if (bowlingFrames.get(1).getFrameStatus() == 1) {
+                        if (bowlingFrames.get(0).getPinsShot() + (bowlingFrames.get(1).getPinsShot()) == 10) {
+                            roundIsSpare();
                         } else {
-                            score = ((BowlingFrame)this.getBowlingFrames().get(0)).getPinsShot() + ((BowlingFrame)this.getBowlingFrames().get(1)).getPinsShot();
-                            this.roundIsDone(score);
+                            score = (bowlingFrames.get(0)).getPinsShot() + (bowlingFrames.get(1).getPinsShot());
+                            roundIsDone(score);
                         }
                     }
                 }
             }
         }
-
     }
 
     public void roundIsStrike() {
-        this.roundType = 2;
-        if (this.roundNumber != 2) {
-            ((BowlingFrame)this.bowlingFrames.get(1)).setFrameStatus(2);
+        // sets round to be a strike.
+        roundType = 2;
+        // if the round is not the last.
+        if (roundNumber != 2) {
+            bowlingFrames.get(1).setFrameStatus(2);
         }
 
     }
 
     public void roundIsSpare() {
-        this.roundType = 1;
+        // sets round tto be a spare.
+        roundType = 1;
     }
 
     public void roundIsDone(int score) {
-        this.roundStatus = 2;
-        this.roundScore = score;
+        // sets round to done.
+        roundStatus = 2;
+        roundScore = score;
     }
 
     public int getId() {
